@@ -1,7 +1,7 @@
 const canvas= document.getElementById("canvas");
 const ctx = canvas.getContext('2d');
 const scorecard=document.getElementById("score");
-let score=90;
+let score=0;
 const rows=5;
 const cols=10;
 const cwidth=canvas.clientWidth;
@@ -89,10 +89,9 @@ function start(){
 
 start();
 function chkrect(fx, fy, rx, ry, rw, rh) {
-    return (fx + radius > rx && 
-            fx - radius < rx + rw && 
-            fy + radius > ry && 
-            fy - radius < ry + rh);
+
+    if(fx + radius > rx && fx - radius < rx + rw && fy + radius > ry && fy - radius < ry + rh) return 1;
+    else return 0;
 }
 
 function chkcoli(fx, fy) {
@@ -198,7 +197,7 @@ function playermove(){
     const fov = Math.PI / 3;
     ctx.beginPath();
     ctx.moveTo(px, py);
-    ctx.arc(px, py, squaresize, angle - (fov / 2), angle + (fov / 2));
+    ctx.arc(px, py, squaresize*1.2, angle - (fov / 2), angle + (fov / 2));
     ctx.lineTo(px, py);
     ctx.clip();
     //end
@@ -347,7 +346,7 @@ setInterval(()=>{
 
 },1000);
 
-const pspeed = 3;
+const pspeed = 5;
 const keys = {w: false,a: false,s: false,d: false};
 window.addEventListener('keydown', function(event) {
     const key = event.key.toLowerCase();
@@ -375,7 +374,7 @@ window.addEventListener('keyup', function(event) {
 window.addEventListener('mousedown', function(event) {
     if (pause || gameover) return;
     const angle = Math.atan2(mouseY - py, mouseX - px);
-    const bSpeed = 2;
+    const bSpeed = 3;
     bullets.push([px + Math.cos(angle) * radius,py + Math.sin(angle) * radius,Math.cos(angle) * bSpeed,Math.sin(angle) * bSpeed,true,0]);
     new Audio("playershot.mp3").play();
 });
@@ -415,7 +414,7 @@ function gameLoop() {
 
     if(!pause && !gameover){
         let frn = -1;
-        for (let i = 0; i < map.length; i++) {
+        for (i = 0; i < map.length; i++) {
             let roomX = map[i][0];
             let roomY = map[i][1];
         
@@ -437,15 +436,15 @@ function gameLoop() {
             let roomY = map[i][1];
             let enemyX = map[i][2];
             let enemyY = map[i][3];
-            let enemyHealth = map[i][7];
+            let enemyhealth = map[i][7];
             let lastShot = map[i][8];
-            if (enemyHealth <= 0) continue;
-            let playerInRoom = (px > roomX && px < roomX + squaresize && py > roomY && py < roomY + squaresize);
-            let distToPlayer = Math.hypot(px - enemyX, py - enemyY);
-            if (playerInRoom && distToPlayer < squaresize * 1.5) {
-                if (currentTime - lastShot > 2500) {
+            if (enemyhealth <= 0) continue;
+            let pinrum = (px > roomX-10 && px < roomX + squaresize +10 && py > roomY-10 && py < roomY + squaresize+10);
+            let dtop = Math.hypot(px - enemyX, py - enemyY);
+            if (pinrum && dtop < squaresize * 2.5) {
+                if (currentTime - lastShot > 1000) {
                     const angle = Math.atan2(py - enemyY, px - enemyX);
-                    const bSpeed = 0.5;
+                    const bSpeed = 2.5;
                     new Audio("enemyshot.mp3").play();
                     bullets.push([enemyX + Math.cos(angle) * radius,enemyY + Math.sin(angle) * radius,Math.cos(angle) * bSpeed, Math.sin(angle) * bSpeed,false,0]);
                     map[i][8] = currentTime;
@@ -490,7 +489,7 @@ function gameLoop() {
             } else {
                 let dist = Math.sqrt((b[0] - px)*(b[0] - px)+(b[1] - py)*(b[1] - py));
                 if (dist < radius + 5) {
-                    phealth -= 5;
+                    phealth -= 10;
                     new Audio("damage.mp3").play();
                     if (healthText) healthText.innerText = phealth;
                     hit = true;
