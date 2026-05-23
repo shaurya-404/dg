@@ -489,7 +489,7 @@ function gameLoop() {
             } else {
                 let dist = Math.sqrt((b[0] - px)*(b[0] - px)+(b[1] - py)*(b[1] - py));
                 if (dist < radius + 5) {
-                    phealth -= 10;
+                    phealth -= 5;
                     new Audio("damage.mp3").play();
                     if (healthText) healthText.innerText = phealth;
                     hit = true;
